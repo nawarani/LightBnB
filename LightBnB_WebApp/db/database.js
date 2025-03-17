@@ -23,8 +23,8 @@ const getUserWithEmail = function (email) {
       'SELECT * FROM users WHERE email = $1',
       [email])
     .then((users) => {
-      if (users[0]) {
-        return users[0];
+      if (users.rows[0]) {
+        return users.rows[0];
       } else {
         return null;
       }
@@ -45,8 +45,8 @@ const getUserWithId = function (id) {
       'SELECT * FROM users WHERE id = $1',
       [id])
     .then((users) => {
-      if (users[0]) {
-        return users[0];
+      if (users.rows[0]) {
+        return users.rows[0];
       } else {
         return null;
       }
@@ -64,10 +64,11 @@ const getUserWithId = function (id) {
 const addUser = function (user) {
   return pool
     .query(
-      'INSERT INTO users(name, email, password) VALUES($1, $2, $3)',
+      'INSERT INTO users(name, email, password) VALUES($1, $2, $3) RETURNING *',
       [user.name, user.email, user.password])
     .then((result) => {
-      return result.rows;
+      console.log("new user id: ", result.rows[0].id);
+      return result.rows[0];
     })
     .catch((err) => {
       console.log(err.message);
